@@ -408,6 +408,14 @@ CGFloat const STPPaymentCardTextFieldMinimumPadding = 10;
     }
 }
 
+- (void)setAllowedCardBrands:(NSArray *)allowedCardBrands {
+    self.viewModel.allowedCardBrands = allowedCardBrands;
+}
+
+- (NSArray *)allowedCardBrands {
+    return self.viewModel.allowedCardBrands;
+}
+
 - (void)setCursorColor:(UIColor *)cursorColor {
     self.tintColor = cursorColor;
 }
@@ -689,7 +697,7 @@ CGFloat const STPPaymentCardTextFieldMinimumPadding = 10;
         
         switch (fieldType) {
             case STPCardFieldTypeNumber:
-                state = self.viewModel.hasCompleteMetadataForCardNumber ? [STPCardValidator validationStateForNumber:self.viewModel.cardNumber validatingCardBrand:YES] : STPCardValidationStateIncomplete;
+                state = self.viewModel.hasCompleteMetadataForCardNumber ? [self.viewModel validationStateForCardValidatingBrand:YES] : STPCardValidationStateIncomplete;
                 break;
                 
             case STPCardFieldTypeExpiration:
@@ -1324,7 +1332,7 @@ typedef void (^STPLayoutAnimationCompletionBlock)(BOOL completed);
             [self updateImageForFieldType:fieldType];
             
             if (self.viewModel.hasCompleteMetadataForCardNumber) {
-                STPCardValidationState state = [STPCardValidator validationStateForNumber:self.viewModel.cardNumber validatingCardBrand:YES];
+                STPCardValidationState state = [self.viewModel validationStateForCardValidatingBrand:YES];
                 [self updateCVCPlaceholder];
                 self.cvcField.validText = [self.viewModel validationStateForCVC] != STPCardValidationStateInvalid;
                 formTextField.validText = state != STPCardValidationStateInvalid;
@@ -1713,7 +1721,7 @@ typedef NS_ENUM(NSInteger, STPFieldEditingTransitionCallSite) {
         switch (fieldType) {
                 
             case STPCardFieldTypeNumber:
-                applyBrandImage(STPCardFieldTypeNumber, [STPCardValidator validationStateForNumber:self.viewModel.cardNumber validatingCardBrand:YES]);
+                applyBrandImage(STPCardFieldTypeNumber, [self.viewModel validationStateForCardValidatingBrand:YES]);
                 break;
                 
             case STPCardFieldTypeExpiration:

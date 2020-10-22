@@ -33,6 +33,7 @@ typedef NS_ENUM(NSInteger, STPCardFieldType) {
 @property (nonatomic, readonly) BOOL postalCodeRequired;
 @property (nonatomic, copy, nullable) NSString *postalCode;
 @property (nonatomic, copy, nullable) NSString *postalCodeCountryCode;
+@property (nonatomic, strong, readwrite, nullable) NSArray *allowedCardBrands;
 @property (nonatomic, readonly) STPCardBrand brand;
 @property (nonatomic, readonly) BOOL isValid;
 @property (nonatomic, readonly) BOOL hasCompleteMetadataForCardNumber;
@@ -44,6 +45,7 @@ typedef NS_ENUM(NSInteger, STPCardFieldType) {
 - (STPCardValidationState)validationStateForExpiration;
 - (STPCardValidationState)validationStateForCVC;
 - (STPCardValidationState)validationStateForPostalCode;
+- (STPCardValidationState)validationStateForCardValidatingBrand:(BOOL)validatingCardBrand;
 
 - (void)validationStateForCardNumberWithHandler:(void (^)(STPCardValidationState))handler;
 

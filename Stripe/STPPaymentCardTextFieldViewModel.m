@@ -142,15 +142,34 @@
     }
 }
 
+- (STPCardValidationState)validationStateForCardValidatingBrand:(BOOL)validatingCardBrand {
+    STPCardValidationState cardBrandState = [self validationStateForCardBrand];
+    return cardBrandState == STPCardValidationStateInvalid ?
+    cardBrandState :
+    [STPCardValidator validationStateForNumber:self.cardNumber validatingCardBrand:validatingCardBrand];
+}
+
 - (void)validationStateForCardNumberWithHandler:(void (^)(STPCardValidationState))handler {
     [STPBINRange retrieveBINRangesForPrefix:self.cardNumber completion:^(__unused NSArray<STPBINRange *> * _Nullable ranges, __unused NSError * _Nullable error) {
         self.hasCompleteMetadataForCardNumber = [STPBINRange hasBINRangesForPrefix:self.cardNumber];
-        handler([STPCardValidator validationStateForNumber:self.cardNumber validatingCardBrand:YES]);
+        handler([self validationStateForCardValidatingBrand:YES]);
     }];
 }
 
+- (STPCardValidationState)validationStateForCardBrand {
+    if (self.allowedCardBrands && self.brand != STPCardBrandUnknown) {
+        NSNumber *brandNumber = @(self.brand);
+        if ([self.allowedCardBrands containsObject:brandNumber]) {
+            return STPCardValidationStateValid;
+        }
+        return STPCardValidationStateInvalid;
+    } else {
+        return STPCardValidationStateValid;
+    }
+}
+
 - (BOOL)isValid {
-    return ([STPCardValidator validationStateForNumber:self.cardNumber validatingCardBrand:YES] == STPCardValidationStateValid
+    return ([self validationStateForCardValidatingBrand:YES] == STPCardValidationStateValid
             && self.hasCompleteMetadataForCardNumber
             && [self validationStateForExpiration] == STPCardValidationStateValid
             && [self validationStateForCVC] == STPCardValidationStateValid

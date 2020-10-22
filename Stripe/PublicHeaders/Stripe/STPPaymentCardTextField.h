@@ -218,6 +218,20 @@ The curent brand image displayed in the receiver.
  */
 @property (nonatomic, assign, readwrite) BOOL postalCodeEntryEnabled;
 
+/**
+ Controls the card brands that can be inserted by the user. Brands missing from this array will be treated as invalid.
+ 
+ Default is NULL.
+ 
+ If NULL, no brand restrictions will be applied.
+ 
+ If this is set, only the card brands that are passed will be valid.
+ 
+ Examples:
+ - Objective C: allowedCardBrands = @[@(STPCardBrandAmex), @(STPCardBrandVisa), @(STPCardBrandMasterCard)];
+ - Swift: allowedCardBrands = [STPCardBrand.Amex.rawValue, STPCardBrand.Visa.rawValue, STPCardBrand.MasterCard.rawValue]
+ */
+@property (nonatomic, readwrite, nullable) NSArray *allowedCardBrands;
 
 /**
  The two-letter ISO country code that corresponds to the user's billing address.
