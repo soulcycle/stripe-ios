@@ -116,6 +116,32 @@ public class STPCardValidator: NSObject {
     }
   }
 
+  public class func validationState(
+    forNumber cardNumber: String?,
+    validatingCardBrand: Bool,
+    validatingAllowedCardBrands allowedCardBrands: [STPCardBrand]
+  ) -> STPCardValidationState {
+    let cardBrand = brand(forNumber: cardNumber ?? "")
+    let cardBrandValidationState: STPCardValidationState
+    if !allowedCardBrands.isEmpty && cardBrand != .unknown {
+      if allowedCardBrands.contains(cardBrand) {
+        cardBrandValidationState = .valid
+      } else {
+        cardBrandValidationState = .invalid
+      }
+    } else {
+      cardBrandValidationState = .valid
+    }
+
+    if cardBrandValidationState == .invalid {
+      return .invalid
+    } else {
+      return validationState(
+        forNumber: cardNumber,
+        validatingCardBrand: validatingCardBrand)
+    }
+  }
+
   /// The card brand for a card number or substring thereof.
   /// - Parameter cardNumber: A card number, or partial card number. For
   /// example, @"4242", @"5555555555554444", or @"123".

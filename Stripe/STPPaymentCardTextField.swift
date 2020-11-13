@@ -329,6 +329,15 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
       viewModel.postalCodeRequested = postalCodeEntryEnabled
     }
   }
+  /// Controls the card brands that can be inserted by the user. Brands missing from this array will be treated as invalid.
+  /// Default is an empty array.
+  /// If empty array, no brand restrictions will be applied.
+  /// If the array is not empty, only the card brands that are in the array will be valid.
+  
+  public var allowedCardBrands: [STPCardBrand] {
+    get { viewModel.allowedCardBrands }
+    set { viewModel.allowedCardBrands = newValue }
+  }
   /// The two-letter ISO country code that corresponds to the user's billing address.
   /// If `postalCodeEntryEnabled` is YES, this controls which type of entry is allowed.
   /// If `postalCodeEntryEnabled` is NO, this property currently has no effect.
@@ -417,7 +426,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
           state =
             viewModel.hasCompleteMetadataForCardNumber
             ? STPCardValidator.validationState(
-              forNumber: viewModel.cardNumber ?? "", validatingCardBrand: true) : .incomplete
+              forNumber: viewModel.cardNumber ?? "", validatingCardBrand: true, validatingAllowedCardBrands: allowedCardBrands) : .incomplete
         case .expiration:
           state = viewModel.validationStateForExpiration()
         case .CVC:
@@ -1455,7 +1464,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
 
       if viewModel.hasCompleteMetadataForCardNumber {
         let state = STPCardValidator.validationState(
-          forNumber: viewModel.cardNumber ?? "", validatingCardBrand: true)
+          forNumber: viewModel.cardNumber ?? "", validatingCardBrand: true, validatingAllowedCardBrands: allowedCardBrands)
         updateCVCPlaceholder()
         cvcField.validText = viewModel.validationStateForCVC() != .invalid
         formTextField.validText = state != .invalid
@@ -1889,7 +1898,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
         applyBrandImage?(
           .number,
           STPCardValidator.validationState(
-            forNumber: viewModel.cardNumber ?? "", validatingCardBrand: true))
+            forNumber: viewModel.cardNumber ?? "", validatingCardBrand: true, validatingAllowedCardBrands: allowedCardBrands))
       case .expiration:
         applyBrandImage?(fieldType, (viewModel.validationStateForExpiration()))
       case .CVC:

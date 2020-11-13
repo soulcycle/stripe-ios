@@ -99,12 +99,14 @@ class STPPaymentCardTextFieldViewModel: NSObject {
     }
   }
 
+  var allowedCardBrands: [STPCardBrand] = []
+
   @objc dynamic var brand: STPCardBrand {
     return STPCardValidator.brand(forNumber: cardNumber ?? "")
   }
 
   @objc dynamic var isValid: Bool {
-    return STPCardValidator.validationState(forNumber: cardNumber ?? "", validatingCardBrand: true)
+    return STPCardValidator.validationState(forNumber: cardNumber ?? "", validatingCardBrand: true, validatingAllowedCardBrands: allowedCardBrands)
       == .valid && hasCompleteMetadataForCardNumber && validationStateForExpiration() == .valid
       && validationStateForCVC() == .valid
       && (!postalCodeRequired || validationStateForPostalCode() == .valid)
@@ -178,7 +180,7 @@ class STPPaymentCardTextFieldViewModel: NSObject {
         forPrefix: self.cardNumber ?? "")
       handler(
         STPCardValidator.validationState(
-          forNumber: self.cardNumber ?? "", validatingCardBrand: true))
+          forNumber: self.cardNumber ?? "", validatingCardBrand: true, validatingAllowedCardBrands: self.allowedCardBrands))
     }
   }
 
