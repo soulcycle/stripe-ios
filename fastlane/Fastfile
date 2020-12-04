@@ -27,6 +27,7 @@ platform :ios do
 
   lane :all_ci do
     standard_tests
+    install_tests
     integration_tests
     ui_and_analyze_tests
     linting_tests
@@ -36,7 +37,6 @@ platform :ios do
 
   lane :standard_tests do
     old_tests
-    install_tests
   end
  
   lane :ui_and_analyze_tests do
@@ -45,9 +45,9 @@ platform :ios do
   end
   
   lane :linting_tests do
-    check_docs
-    builds
     preflight
+    builds
+    check_docs
   end
 
   lane :install_tests do
@@ -55,13 +55,12 @@ platform :ios do
     installation_cocoapods_frameworks_objc
     installation_cocoapods_frameworks_swift
     installation_carthage
+    installation_spm
   end
 
   lane :preflight do
     Dir.chdir("..") do
       sh("./ci_scripts/check_version.rb")
-      sh("./ci_scripts/check_public_headers.rb")
-      sh("./ci_scripts/check_category_linking.rb")
       sh("./ci_scripts/check_for_new_localized_strings.sh")
     end
   end
@@ -138,6 +137,12 @@ platform :ios do
     end
   end
 
+  lane :installation_spm do
+    Dir.chdir("..") do
+      sh("./Tests/installation_tests/swift_package_manager/test.sh")
+    end
+  end
+
   lane :check_docs do
     Dir.chdir("..") do
       sh("./ci_scripts/check_documentation.sh")
@@ -146,7 +151,7 @@ platform :ios do
 
   lane :tests do
     run_tests(scheme: "StripeiOS",
-      devices: ["iPhone 7"])
+      devices: ["iPhone 8"])
   end
   
 end

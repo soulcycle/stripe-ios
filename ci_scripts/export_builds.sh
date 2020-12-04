@@ -79,7 +79,6 @@ fi
 
 # Once Xcode 12 is out, uncomment this section so we start building a Mac slice in our distributed .xcframework again.
 # Until then, our recommended strategy for Catalyst users will be Xcode 12 + Swift Package Manager.
-# 
 xcodebuild clean archive \
   -workspace "Stripe.xcworkspace" \
   -scheme "StripeiOS" \
@@ -106,17 +105,15 @@ else
   codesign -f --deep -s "$codesign_identity" "${build_dir}/Stripe-iOS.xcarchive/Products/Library/Frameworks/Stripe.framework"
   codesign -f --deep -s "$codesign_identity" "${build_dir}/Stripe-sim.xcarchive/Products/Library/Frameworks/Stripe.framework"
   codesign -f --deep -s "$codesign_identity" "${build_dir}/Stripe-mac.xcarchive/Products/Library/Frameworks/Stripe.framework"
-fi
+
   xcodebuild -create-xcframework \
   -framework "${build_dir}/Stripe-iOS.xcarchive/Products/Library/Frameworks/Stripe.framework" \
   -framework "${build_dir}/Stripe-sim.xcarchive/Products/Library/Frameworks/Stripe.framework" \
   -framework "${build_dir}/Stripe-mac.xcarchive/Products/Library/Frameworks/Stripe.framework" \
   -output "${build_dir}/Stripe.xcframework"
 
-if [ ! -z "$codesign_identity" ]; then
   codesign -f --deep -s "$codesign_identity" "${build_dir}/Stripe.xcframework"
-fi
-
+    
   ditto \
     -ck \
     --rsrc \
@@ -124,6 +121,9 @@ fi
     --keepParent \
     "${build_dir}/Stripe.xcframework" \
     "${build_dir}/Stripe.xcframework.zip"
+
+  swift package compute-checksum "${build_dir}/Stripe.xcframework.zip"
+fi
 
 set +ex
 

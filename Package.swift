@@ -11,28 +11,13 @@ let package = Package(
     .library(
       name: "Stripe",
       targets: ["Stripe"]
-    ),
+    )
   ],
   targets: [
-    .target(
-      name: "Stripe",
-      dependencies: ["Stripe3DS2"],
-      path: "Stripe",
-        exclude: ["BuildConfigurations", "Info.plist", "PublicHeaders/Stripe/Stripe3DS2-Prefix.pch", "ExternalResources/Stripe3DS2.bundle"],
-        resources: [
-          .process("Info.plist"),
-          .process("Resources/Images"),
-          .process("Resources/au_becs_bsb.json"),
-        ],
-        publicHeadersPath: "PublicHeaders",
-        cSettings: [
-          .headerSearchPath("."),
-          .headerSearchPath("PublicHeaders/Stripe"),
-        ]
-    ),
     .binaryTarget(
-      name: "Stripe3DS2",
-      path: "InternalFrameworks/dynamic/Stripe3DS2.xcframework"
-    ),
+      name: "Stripe",
+      url: "https://d37ugbyn3rpeym.cloudfront.net/terminal/payments-ios-releases/21.0.1/Stripe.xcframework.zip",
+      checksum: "d42ac188d64ae2106402f96e78eeebd00e3f9a0b037bb9f7ae8d9d69f95f5027"
+    )
   ]
 )
