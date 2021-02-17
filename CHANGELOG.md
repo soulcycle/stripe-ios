@@ -1,3 +1,28 @@
+## 21.2.1 2021-01-29
+* Fixed an issue where a payment card text field could resize incorrectly on smaller devices or with certain languages. [#1600](https://github.com/stripe/stripe-ios/issues/1600)
+* Fixed an issue where the SDK could always return English strings in certain situations. [#1677](https://github.com/stripe/stripe-ios/pull/1677) (Thanks [glaures-ioki](https://github.com/glaures-ioki)!)
+* Fixed an issue where an STPTheme had no effect on the navigation bar. [#1753](https://github.com/stripe/stripe-ios/pull/1753) (Thanks  [@rbenna](https://github.com/rbenna)!)
+* Fixed handling of nil region codes. [#1752](https://github.com/stripe/stripe-ios/issues/1752)
+* Fixed an issue preventing card scanning from being disabled. [#1751](https://github.com/stripe/stripe-ios/issues/1751)
+* Fixed an issue with enabling card scanning in an app with a localized Info.plist.[#1745](https://github.com/stripe/stripe-ios/issues/1745)
+* Added a missing additionalDocument parameter to STPConnectAccountIndividualVerification.
+* Added support for Afterpay/Clearpay.
+
+## 21.2.0 2021-01-06
+* Stripe3DS2 is now open source software under the MIT License.
+* Fixed various issues with bundling Stripe3DS2 in Cocoapods and Swift Package Manager. All binary dependencies have been removed.
+* Fixed an infinite loop during layout on small screen sizes. [#1731](https://github.com/stripe/stripe-ios/issues/1731)
+* Fixed issues with missing image assets when using Cocoapods. [#1655](https://github.com/stripe/stripe-ios/issues/1655) [#1722](https://github.com/stripe/stripe-ios/issues/1722)
+* Fixed an issue which resulted in unnecessary queries to the BIN information service.
+* Adds the ability to `attach` and `detach` PaymentMethod IDs to/from a CustomerContext. [#1729](https://github.com/stripe/stripe-ios/issues/1729)
+* Adds support for NetBanking.
+
+## 21.1.0 2020-12-07
+* Fixes a crash during manual confirmation of a 3DS2 payment. [#1725](https://github.com/stripe/stripe-ios/issues/1725)
+* Fixes an issue that could cause some image assets to be missing in certain configurations. [#1722](https://github.com/stripe/stripe-ios/issues/1722)
+* Fixes an issue with confirming Alipay transactions.
+* Re-exposes `cardNumber` parameter in `STPPaymentCardTextField`.
+* Adds support for UPI.
 
 ## 21.0.1 2020-11-19
 * Fixes an issue with some initializers not being exposed publicly following the [conversion to Swift](https://stripe.com/docs/mobile/ios/sdk-21-migration).

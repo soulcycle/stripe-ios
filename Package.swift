@@ -14,10 +14,25 @@ let package = Package(
     )
   ],
   targets: [
-    .binaryTarget(
+    .target(
       name: "Stripe",
-      url: "https://d37ugbyn3rpeym.cloudfront.net/terminal/payments-ios-releases/21.0.1/Stripe.xcframework.zip",
-      checksum: "d42ac188d64ae2106402f96e78eeebd00e3f9a0b037bb9f7ae8d9d69f95f5027"
+      dependencies: ["Stripe3DS2"],
+      path: "Stripe",
+        exclude: ["BuildConfigurations", "Info.plist"],
+        resources: [
+          .process("Info.plist"),
+          .process("Resources/Images"),
+          .process("Resources/au_becs_bsb.json")
+        ]
+    ),
+    .target(
+      name: "Stripe3DS2",
+      path: "Stripe3DS2/Stripe3DS2",
+      exclude: ["BuildConfigurations", "Info.plist", "Resources/CertificateFiles", "include/Stripe3DS2-Prefix.pch"],
+      resources: [
+          .process("Info.plist"),
+          .process("Resources")
+        ]
     )
   ]
 )

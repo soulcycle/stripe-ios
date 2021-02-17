@@ -10,7 +10,9 @@ import Foundation
 import PassKit
 import SafariServices
 
+#if canImport(Stripe3DS2)
 import Stripe3DS2
+#endif
 
 /// `STPPaymentHandlerActionStatus` represents the possible outcomes of requesting an action by `STPPaymentHandler`. An action could be confirming and/or handling the next action for a PaymentIntent.
 @objc public enum STPPaymentHandlerActionStatus: Int {
@@ -80,6 +82,7 @@ public typealias STPPaymentHandlerActionSetupIntentCompletionBlock = (
 /// It can present authentication UI on top of your app or redirect users out of your app (to e.g. their banking app).
 /// - seealso: https://stripe.com/docs/mobile/ios/authentication
 @available(iOSApplicationExtension, unavailable)
+@available(macCatalystApplicationExtension, unavailable)
 public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURLCallbackListener
 {
 
@@ -153,7 +156,8 @@ public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURL
           paymentIntent.status == .succeeded || paymentIntent.status == .requiresCapture
           || (paymentIntent.status == .processing
             && STPPaymentHandler._isProcessingIntentSuccess(
-              for: paymentIntent.paymentMethod?.type ?? .unknown))
+              for: paymentIntent.paymentMethod?.type ?? .unknown) ||
+            (paymentIntent.status == .requiresAction && strongSelf._isPaymentIntentNextActionVoucherBased(nextAction: paymentIntent.nextAction)))
 
         if error == nil && successIntentState {
           completion(.succeeded, paymentIntent, nil)
@@ -249,11 +253,8 @@ public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURL
         let successIntentState =
           paymentIntent.status == .succeeded ||
           paymentIntent.status == .requiresCapture ||
-          (paymentIntent.status == .processing
-            && STPPaymentHandler._isProcessingIntentSuccess(
-              for: paymentIntent.paymentMethod?.type ?? .unknown) ||
-            (paymentIntent.status == .requiresAction && strongSelf._isPaymentIntentNextActionVoucherBased(nextAction: paymentIntent.nextAction)))
-
+          paymentIntent.status == .requiresConfirmation
+        
         if error == nil && successIntentState {
           completion(.succeeded, paymentIntent, nil)
         } else {
@@ -503,6 +504,7 @@ public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURL
     /* Synchronous */
     case .alipay,
       .card,
+      .UPI,
       .iDEAL,
       .FPX,
       .cardPresent,
@@ -511,8 +513,10 @@ public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURL
       .payPal,
       .przelewy24,
       .bancontact,
+      .netBanking,
       .OXXO,
-      .grabPay:
+      .grabPay,
+      .afterpayClearpay:
       return false
 
     case .unknown:
@@ -989,10 +993,9 @@ public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURL
         currentAction, completionBlock in
         if let paymentMethod = currentAction.paymentIntent?.paymentMethod,
           paymentMethod.type == .alipay,
-          let alipayHandleRedirect = currentAction.nextAction()?.alipayHandleRedirect
+          let alipayHandleRedirect = currentAction.nextAction()?.alipayHandleRedirect,
+          let alipayReturnURL = alipayHandleRedirect.marlinReturnURL
         {
-
-          let alipayReturnURL = alipayHandleRedirect.returnURL
 
           // Make a request to the return URL
           let request: URLRequest = URLRequest(url: alipayReturnURL)
@@ -1416,6 +1419,7 @@ public class STPPaymentHandler: NSObject, SFSafariViewControllerDelegate, STPURL
 }
 
 @available(iOSApplicationExtension, unavailable)
+@available(macCatalystApplicationExtension, unavailable)
 private extension STPPaymentHandler {
   // MARK: - STPChallengeStatusReceiver
   /// :nodoc:

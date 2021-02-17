@@ -36,12 +36,18 @@ import Foundation
   @objc(STPPaymentMethodTypeEPS) case EPS
   /// A Bancontact payment method.
   case bancontact
+  /// A NetBanking payment method.
+  case netBanking
   /// An OXXO payment method.
   @objc(STPPaymentMethodTypeOXXO) case OXXO
   /// A Sofort payment method.
   case sofort
+  /// A UPI payment method.
+  case UPI
   /// A PayPal payment method. :nodoc:
   case payPal
+  /// An AfterpayClearpay payment method
+  case afterpayClearpay
   /// An unknown type.
   case unknown
 }

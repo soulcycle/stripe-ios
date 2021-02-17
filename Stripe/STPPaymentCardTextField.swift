@@ -262,7 +262,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
   /// The current card number displayed by the field.
   /// May or may not be valid, unless `isValid` is true, in which case it is guaranteed
   /// to be valid.
-  var cardNumber: String? {
+  @objc public var cardNumber: String? {
     return viewModel.cardNumber
   }
   /// The current expiration month displayed by the field (1 = January, etc).
@@ -1123,6 +1123,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
               expiryVisibility = .hidden
             } else {
               hPadding = STPPaymentCardTextFieldMinimumPadding
+              break
             }
             hPadding = calculateMinimumPaddingWithLocalVars()
           }
@@ -1142,6 +1143,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
               postalVisibility = .hidden
             } else {
               hPadding = STPPaymentCardTextFieldMinimumPadding
+              break
             }
             hPadding = calculateMinimumPaddingWithLocalVars()
           }
@@ -1162,6 +1164,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
               panVisibility = .hidden
             } else {
               hPadding = STPPaymentCardTextFieldMinimumPadding
+              break
             }
             hPadding = calculateMinimumPaddingWithLocalVars()
           }
@@ -1181,6 +1184,7 @@ public class STPPaymentCardTextField: UIControl, UIKeyInput, STPFormTextFieldDel
               expiryVisibility = .hidden
             } else {
               hPadding = STPPaymentCardTextFieldMinimumPadding
+              break
             }
             hPadding = calculateMinimumPaddingWithLocalVars()
           }
