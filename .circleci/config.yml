@@ -10,13 +10,13 @@ commands:
       - checkout
       - run: "bundle config set path 'vendor/bundle'"
       - restore_cache:
-          key: v1-stp-carthage-xcode-122-cache # Update this if Carthage dependencies or Xcode version change
+          key: v2-stp-carthage-xcode-122-cache # Update this if Carthage dependencies or Xcode version change
       - restore_cache:
           key: v4-stp-bundle-xcode-122-cache # Update this if bundle dependencies or Xcode version change
       - run: "bundle install"
-      - run: "carthage bootstrap --platform iOS --configuration Release --no-use-binaries --cache-builds"
+      - run: "carthage bootstrap --platform iOS --configuration Release --no-use-binaries --cache-builds --use-xcframeworks"
       - save_cache:
-          key: v1-stp-carthage-xcode-122-cache
+          key: v2-stp-carthage-xcode-122-cache
           paths:
             - Carthage
       - save_cache:
@@ -26,6 +26,7 @@ commands:
   prep_environment:
     description: "Prep environment variables to build to local folder"
     steps:
+      - run: "brew upgrade carthage"
       - run: "bundle config set path 'vendor/bundle'"
       - run: echo "export CONFIGURATION_BUILD_DIR=$CIRCLE_WORKING_DIRECTORY/stpbuild/products" >> $BASH_ENV
       - run: echo "export CONFIGURATION_TEMP_DIR=$CIRCLE_WORKING_DIRECTORY/stpbuild/intermediates" >> $BASH_ENV
@@ -57,6 +58,14 @@ jobs:
           at: .
       - prep_environment
       - run: "bundle exec fastlane main_tests"
+
+  e2e-only:
+    executor: mac-executor
+
+    steps:
+      - prep_environment
+      - prep_bundler_carthage
+      - run: "bundle exec fastlane e2e_only"
 
   ui-and-analyze-tests:
     executor: mac-executor
@@ -122,6 +131,7 @@ jobs:
       - run: "./stripe3ds2-support/ci_scripts/run_analyzer.sh"
 
 workflows:
+  version: 2
   build-and-test:
     jobs:
       - ci-builds
@@ -141,3 +151,13 @@ workflows:
       - linting-tests
       - install-tests
       - threeds2-tests
+  e2e-only:
+    triggers:
+      - schedule:
+          cron: "56 8 * * *" # at 8:56 every day
+          filters:
+            branches:
+              only:
+                - private
+    jobs:
+      - e2e-only
